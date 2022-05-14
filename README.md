@@ -4,8 +4,10 @@ So I needed to build a query that checks the presence of some records in a table
 
 Enter **stringify**
 
-This would convert a list of objects into a list of delimited string objects, that could be copied and pasted ie:
+This would convert a list of objects into a list of delimited string objects(assuming comma delimiter), that could be copied and pasted ie:
+
 raw = 12de43 abd 983023
+
 converted = '12de43','abd','983023'
 
 I'll attempt to solve this problem in phases as I learn more about building web apps.
@@ -26,4 +28,4 @@ Build a web app, using either flask or fast api. I haven't decided yet.
 
 Host it somewhere, I don't know enough yet.
 
-_perhaps as an extra step build a cli version of the app
+_perhaps as an extra step build a cli version of the app_
