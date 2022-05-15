@@ -20,6 +20,11 @@ Build the basic logic of converting objects to their string versions.
 ## Phase 2
 
 Build a desktop version of app.
+
+In order to get started I needed to install a GUI library, and I went with PyQT well for no particular reason.
+
+Check this [repo](https://github.com/cliffordEmmanuel/python-desktop-apps) to get started with implementing a basic PyQt app
+
 ## Phase 3
 
 Build a web app, using either flask or fast api. I haven't decided yet.
