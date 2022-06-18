@@ -12,6 +12,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_Stringify(object):
+    def __init__(self) -> None:
+        self._raw_text = None
+        self._processed_text = None
+        self._separator = ","
+
     def setupUi(self, Stringify):
         Stringify.setObjectName("Stringify")
         Stringify.resize(800, 600)
@@ -31,18 +36,31 @@ class Ui_Stringify(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
+
+        # input text field
         self.input_text_field = QtWidgets.QTextEdit(self.centralwidget)
         self.input_text_field.setGeometry(QtCore.QRect(40, 250, 281, 211))
         self.input_text_field.setObjectName("input_text_field")
+
+        # output text field
         self.output_text_field = QtWidgets.QTextEdit(self.centralwidget)
         self.output_text_field.setGeometry(QtCore.QRect(480, 250, 281, 211))
         self.output_text_field.setObjectName("output_text_field")
+
+        # stringify button
         self.stringify_button = QtWidgets.QPushButton(self.centralwidget)
         self.stringify_button.setGeometry(QtCore.QRect(360, 330, 89, 25))
         self.stringify_button.setObjectName("stringify_button")
+
+        self.stringify_button.clicked.connect(self.stringify_clicked)
+
+        # reset button
         self.reset_button = QtWidgets.QPushButton(self.centralwidget)
         self.reset_button.setGeometry(QtCore.QRect(360, 390, 89, 25))
         self.reset_button.setObjectName("reset_button")
+
+        self.reset_button.clicked.connect(self._reset)
+
         self.delimeter_comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.delimeter_comboBox.setGeometry(QtCore.QRect(370, 270, 71, 25))
         self.delimeter_comboBox.setObjectName("delimeter_comboBox")
@@ -52,10 +70,65 @@ class Ui_Stringify(object):
         self.delimeter_comboBox.addItem("")
         self.delimeter_comboBox.addItem("")
         self.delimeter_comboBox.addItem("")
+
         Stringify.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(Stringify)
         QtCore.QMetaObject.connectSlotsByName(Stringify)
+
+    def stringify(self, raw_text, separator) -> None:
+        """Converts a raw list of objects into their string versions.
+
+        Args:
+            raw (str): assumes that the input is a big string of the objects combined.
+            separator (str, optional): the character to be used as a delimeter. Defaults to ','.
+
+        Returns:
+            str: a 'stringified' version of the delimited objects.
+        """
+
+        # TODO: a way to detect the separator used
+        # assume the standard separators(spaces, comma, semicolon, pipe, new line)
+        # and use that to split this big string into a list
+        # but that depends on the source of the input
+        def detect_separator(raw: str):
+            default_separators = [" ", ",", "|"]
+            pass
+
+        if separator == "newline":
+            separator = "\n"
+
+        # for now assume they are separated by the space character
+        splitted = raw_text.split(",")
+        # the str.split function always returns a list of string versions.
+
+        processed_text = separator.join(splitted)
+
+        # str(f).replace('[','').replace(']','')
+
+        return splitted
+
+    def stringify_clicked(self):
+        # get the raw text entered
+        self._raw_text = self.input_text_field.toPlainText()
+        print(type(self._raw_text), self._raw_text)
+        # get the separator
+        self._separator = self.delimeter_comboBox.currentText()
+        # compute the stringified version
+        self._processed_text = self.stringify(self._raw_text, self._separator)
+        print(type(self._processed_text))
+        # output to the output text field
+        self.output_text_field.clear()
+        self.output_text_field.insertPlainText(self._processed_text)
+
+        return None
+
+    def _reset(self):
+        self.input_text_field.clear()
+        self.output_text_field.clear()
+        self.delimeter_comboBox.setCurrentText(",")
+        # TODO: add a message box to display info.
+        print("All fields have been reset back to defaults")
 
     def retranslateUi(self, Stringify):
         _translate = QtCore.QCoreApplication.translate
