@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from detect_delimiter import detect
 
 
 class Ui_Stringify(object):
@@ -49,14 +50,21 @@ class Ui_Stringify(object):
 
         # stringify button
         self.stringify_button = QtWidgets.QPushButton(self.centralwidget)
-        self.stringify_button.setGeometry(QtCore.QRect(360, 330, 89, 25))
+        self.stringify_button.setGeometry(QtCore.QRect(360, 320, 89, 25))
         self.stringify_button.setObjectName("stringify_button")
 
         self.stringify_button.clicked.connect(self.stringify_clicked)
 
+        # delimit button
+        self.delimit_button = QtWidgets.QPushButton(self.centralwidget)
+        self.delimit_button.setGeometry(QtCore.QRect(360, 360, 89, 25))
+        self.delimit_button.setObjectName("delimit_button")
+
+        self.delimit_button.clicked.connect(self.delimit_clicked)
+
         # reset button
         self.reset_button = QtWidgets.QPushButton(self.centralwidget)
-        self.reset_button.setGeometry(QtCore.QRect(360, 390, 89, 25))
+        self.reset_button.setGeometry(QtCore.QRect(360, 400, 89, 25))
         self.reset_button.setObjectName("reset_button")
 
         self.reset_button.clicked.connect(self._reset)
@@ -76,7 +84,7 @@ class Ui_Stringify(object):
         self.retranslateUi(Stringify)
         QtCore.QMetaObject.connectSlotsByName(Stringify)
 
-    def stringify(self, raw_text, separator) -> None:
+    def stringify(self, raw_text: str, separator: str = ",") -> str:
         """Converts a raw list of objects into their string versions.
 
         Args:
@@ -87,36 +95,76 @@ class Ui_Stringify(object):
             str: a 'stringified' version of the delimited objects.
         """
 
-        # TODO: a way to detect the separator used
-        # assume the standard separators(spaces, comma, semicolon, pipe, new line)
-        # and use that to split this big string into a list
-        # but that depends on the source of the input
-        def detect_separator(raw: str):
-            default_separators = [" ", ",", "|"]
-            pass
+        if separator == "newline":
+            separator = "\n"
+        elif separator == "space":
+            separator = " "
+
+        # detecting the delimiter used in the raw text provided
+        delimiter = detect(raw_text, whitelist=[" ", ",", "|", ";", "\t", "\n"])
+        # count how many times a delimiter occurs rank by frequency and return the one that occurs the most.
+        # perhaps i can re-write this instead of importing a library...
+
+        splitted = raw_text.split(delimiter)
+        # the str.split function always returns a list of string versions.
+        string_version = str(splitted).replace("[", "").replace("]", "")
+
+        processed_text = string_version.replace(", ", separator)
+
+        return processed_text
+
+    def delimit(self, raw_text: str, separator: str = ",") -> str:
+        """Separates a list of objects by a specifc delimiter.
+
+        Args:
+            raw (str): assumes that the input is a big string of the objects combined.
+            separator (str, optional): the character to be used as a delimeter. Defaults to ','.
+
+        Returns:
+            str: the delimited objects.
+        """
 
         if separator == "newline":
             separator = "\n"
+        elif separator == "space":
+            separator = " "
 
-        # for now assume they are separated by the space character
-        splitted = raw_text.split(",")
-        # the str.split function always returns a list of string versions.
+        # detecting the delimiter used in the raw text provided
+        delimiter = detect(raw_text, whitelist=[" ", ",", "|", ";", "\t", "\n"])
 
+        splitted = raw_text.split(delimiter)
         processed_text = separator.join(splitted)
 
-        # str(f).replace('[','').replace(']','')
+        return processed_text
 
-        return splitted
+    def stringify_clicked(self) -> None:
+        """Calls the stringify function when the stringify button is clicked"""
 
-    def stringify_clicked(self):
         # get the raw text entered
         self._raw_text = self.input_text_field.toPlainText()
-        print(type(self._raw_text), self._raw_text)
+        print(f"raw_text: {self._raw_text}")
         # get the separator
         self._separator = self.delimeter_comboBox.currentText()
         # compute the stringified version
         self._processed_text = self.stringify(self._raw_text, self._separator)
-        print(type(self._processed_text))
+        print(f"processed_text: {self._processed_text}")
+        # output to the output text field
+        self.output_text_field.clear()
+        self.output_text_field.insertPlainText(self._processed_text)
+
+        return None
+
+    def delimit_clicked(self) -> None:
+        """Calls the delimit function when the delimit button is clicked"""
+
+        # get the raw text entered
+        self._raw_text = self.input_text_field.toPlainText()
+        print(f"raw_text: {self._raw_text}")
+        # get the separator
+        self._separator = self.delimeter_comboBox.currentText()
+        # compute the stringified version
+        self._processed_text = self.delimit(self._raw_text, self._separator)
+        print(f"processed_text: {self._processed_text}")
         # output to the output text field
         self.output_text_field.clear()
         self.output_text_field.insertPlainText(self._processed_text)
@@ -124,6 +172,7 @@ class Ui_Stringify(object):
         return None
 
     def _reset(self):
+        """Resets all the input and output elements to their default"""
         self.input_text_field.clear()
         self.output_text_field.clear()
         self.delimeter_comboBox.setCurrentText(",")
@@ -143,6 +192,7 @@ class Ui_Stringify(object):
             _translate("Stringify", "Paste or type your raw text here!!")
         )
         self.stringify_button.setText(_translate("Stringify", "stringify"))
+        self.delimit_button.setText(_translate("Stringify", "delimit"))
         self.reset_button.setText(_translate("Stringify", "reset"))
         self.delimeter_comboBox.setToolTip(_translate("Stringify", "choose a delimeter!"))
         self.delimeter_comboBox.setItemText(0, _translate("Stringify", ","))
