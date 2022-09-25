@@ -29,7 +29,6 @@ To setup your environment to ran this desktop version do this:
 - Create a virtual environment using the packages in the requirements.txt using this command:
 `conda create --name <env> --file requirements.txt`
 
-_this assumes you're using conda virtual 
 ## Phase 3
 
 Build a web app, using either flask or fast api. I haven't decided yet.
