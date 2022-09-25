@@ -21,10 +21,15 @@ Build the basic logic of converting objects to their string versions.
 
 Build a desktop version of app.
 
-In order to get started I needed to install a GUI library, and I went with PyQT well for no particular reason.
+In order to get started I needed to install a GUI library, and I went with PyQT.
 
 Check this [repo](https://github.com/cliffordEmmanuel/python-desktop-apps) to get started with implementing a basic PyQt app
 
+To setup your environment to ran this desktop version do this:
+- Create a virtual environment using the packages in the requirements.txt using this command:
+`conda create --name <env> --file requirements.txt`
+
+_this assumes you're using conda virtual 
 ## Phase 3
 
 Build a web app, using either flask or fast api. I haven't decided yet.
